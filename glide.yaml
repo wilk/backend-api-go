@@ -2,9 +2,12 @@ package: .
 import:
 - package: github.com/go-martini/martini
   version: ^1.0.0
-- package: github.com/mattn/go-sqlite3
-  version: ^1.2.0
 - package: github.com/Sirupsen/logrus
   version: ^0.11.4
 - package: github.com/codegangsta/inject
   version: ^1.0.0-rc1
+- package: github.com/jinzhu/gorm
+  version: ^1.0.0
+- package: github.com/jinzhu/inflection
+- package: github.com/martini-contrib/render
+- package: github.com/oxtoacart/bpool

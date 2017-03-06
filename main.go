@@ -2,18 +2,34 @@ package main
 
 import (
 	"github.com/go-martini/martini"
-	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/Sirupsen/logrus"
 	"os"
+	"net/http"
+	"encoding/json"
+	"github.com/martini-contrib/render"
 )
 
 func getUsers() {
 
 }
 
-func insertUser() {
+func insertUser(res http.ResponseWriter, req *http.Request, db *gorm.DB, render render.Render) {
+	decoder := json.NewDecoder(req.Body)
+	defer req.Body.Close()
 
+	var user User
+	err := decoder.Decode(&user)
+	if err != nil {
+		render.HTML(http.StatusBadRequest, "Error", "Bad JSON encoding")
+		return
+	}
+
+	db.Create(&user)
+	db.Save(&user)
+
+	render.JSON(http.StatusCreated, user)
 }
 
 func getUser() {
@@ -28,12 +44,21 @@ func deleteUser() {
 
 }
 
+type User struct {
+	gorm.Model
+
+	Name string `json:"name"{gorm:"default:'name'"`
+	Age int `json:"age";gorm:"default:'age'"`
+	Email string `json:"email";gorm:"default:'email'"`
+	Mobile string `json:"mobile";gorm:"default:'mobile'"`
+}
+
 func main() {
 	log.Info("Starting the web server...")
 
 	log.Info("Opening the SQLite DB...")
 
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := gorm.Open("sqlite3", "./data.db")
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
@@ -42,9 +67,14 @@ func main() {
 
 	log.Info("SQLite DB opened!")
 
-	m := martini.Classic()
+	db.AutoMigrate(&User{})
 
-	m.Group("/api/users", func (r martini.Router) {
+	server := martini.Classic()
+
+	server.Map(db)
+	server.Use(render.Renderer())
+
+	server.Group("/api/users", func (r martini.Router) {
 		r.Get("/", getUsers)
 		r.Post("/", insertUser)
 		r.Get("/:id", getUser)
@@ -52,7 +82,7 @@ func main() {
 		r.Delete("/:id", deleteUser)
 	})
 
-	m.Run()
+	log.Info("Server listening on port 3000")
 
-	log.Info("Server is listening on port 3000")
+	server.Run()
 }
