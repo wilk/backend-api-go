@@ -15,14 +15,15 @@ func getUsers() {
 
 }
 
-func insertUser(res http.ResponseWriter, req *http.Request, db *gorm.DB, render render.Render) {
+func insertUser(req *http.Request, db *gorm.DB, render render.Render) {
 	decoder := json.NewDecoder(req.Body)
 	defer req.Body.Close()
 
 	var user User
 	err := decoder.Decode(&user)
 	if err != nil {
-		render.HTML(http.StatusBadRequest, "Error", "Bad JSON encoding")
+		log.Error(err)
+		render.Text(http.StatusBadRequest, "Bad JSON encoding")
 		return
 	}
 
@@ -32,8 +33,14 @@ func insertUser(res http.ResponseWriter, req *http.Request, db *gorm.DB, render 
 	render.JSON(http.StatusCreated, user)
 }
 
-func getUser() {
+func getUser(params martini.Params, db *gorm.DB, render render.Render) {
+	var user User
+	if db.First(&user, params["id"]).RecordNotFound() {
+		render.Text(http.StatusNotFound, "User not found")
+		return
+	}
 
+	render.JSON(http.StatusOK, user)
 }
 
 func updateUser() {
@@ -47,7 +54,7 @@ func deleteUser() {
 type User struct {
 	gorm.Model
 
-	Name string `json:"name"{gorm:"default:'name'"`
+	Name string `json:"name";gorm:"default:'name'"`
 	Age int `json:"age";gorm:"default:'age'"`
 	Email string `json:"email";gorm:"default:'email'"`
 	Mobile string `json:"mobile";gorm:"default:'mobile'"`
