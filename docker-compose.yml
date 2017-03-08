@@ -1,0 +1,14 @@
+version: '2'
+services:
+  backend-service:
+    image: wilk/backend-api-golang
+    command: "./main"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/go/src/backend-api
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000

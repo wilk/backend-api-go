@@ -51,3 +51,4 @@ _testmain.go
 .idea
 vendor
 main
+.glide
