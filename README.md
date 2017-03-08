@@ -13,7 +13,7 @@ Clone and setup:
 ```bash
 $ git clone https://github.com/wilk/backend-api-go.git
 $ cd backend-api-go
-$ ./setup
+$ ./setup.sh
 ```
 
 ## Running
