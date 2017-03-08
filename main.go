@@ -85,8 +85,16 @@ func updateUser(req *http.Request, params martini.Params, db *gorm.DB, render re
 	render.JSON(http.StatusOK, user)
 }
 
-func deleteUser() {
+func deleteUser(params martini.Params, db *gorm.DB, render render.Render) {
+	var user User
+	if db.First(&user, params["id"]).RecordNotFound() {
+		render.Text(http.StatusNotFound, "User not found")
+		return
+	}
 
+	db.Delete(&user)
+
+	render.Text(http.StatusOK, "User deleted")
 }
 
 type User struct {
