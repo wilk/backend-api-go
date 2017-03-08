@@ -11,8 +11,11 @@ import (
 	"github.com/martini-contrib/render"
 )
 
-func getUsers() {
+func getUsers(db *gorm.DB, render render.Render) {
+	var users []User
+	db.Find(&users)
 
+	render.JSON(http.StatusOK, users)
 }
 
 func insertUser(req *http.Request, db *gorm.DB, render render.Render) {
