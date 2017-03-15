@@ -3,14 +3,17 @@ A simple RESTful API (CRUD) built with GoLang
 
 ## Requirements
 
+- [Git](https://git-scm.com/)
 - [Docker](https://www.docker.com/)
 - [docker-compose](https://docs.docker.com/compose/)
 
 ## Install
-Just launch the setup script:
+Clone and setup:
 
 ```bash
-$ ./setup
+$ git clone https://github.com/wilk/backend-api-go.git
+$ cd backend-api-go
+$ ./setup.sh
 ```
 
 ## Running
