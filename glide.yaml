@@ -11,3 +11,4 @@ import:
 - package: github.com/jinzhu/inflection
 - package: github.com/martini-contrib/render
 - package: github.com/oxtoacart/bpool
+- package: github.com/martini-contrib/cors

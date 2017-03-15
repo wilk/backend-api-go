@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"github.com/martini-contrib/render"
+	"github.com/martini-contrib/cors"
 )
 
 func getUsers(db *gorm.DB, render render.Render) {
@@ -126,6 +127,13 @@ func main() {
 
 	server.Map(db)
 	server.Use(render.Renderer())
+	server.Use(cors.Allow(&cors.Options{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "OPTIONS", "PUT", "DELETE", "POST"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	server.Group("/api/users", func (r martini.Router) {
 		r.Get("/", getUsers)
